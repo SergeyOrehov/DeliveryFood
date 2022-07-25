@@ -1,8 +1,28 @@
 export const menu = () => {
   const cardsMenu = document.querySelector(".cards-menu");
+
+  const cartArray = localStorage.getItem("cart")
+    ? JSON.parse(localStorage.getItem("cart"))
+    : [];
+
   const changeTitle = (restaurant) => {
     const restaurantTitle = document.querySelector(".restaurant-title");
     restaurantTitle.textContent = restaurant.name;
+  };
+
+  const addToCart = (cartItem) => {
+    if (cartArray.some((item) => item.id === cartItem.id)) {
+      cartArray.map((item) => {
+        if (item.id === cartItem.id) {
+          item.count++;
+        }
+        return item;
+      });
+    } else {
+      cartArray.push(cartItem);
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cartArray));
   };
 
   const renderItems = (data) => {
@@ -30,6 +50,18 @@ export const menu = () => {
           </div>
         </div>
       `;
+
+      card.querySelector(".button-card-text").addEventListener("click", () => {
+        const cartItem = {
+          name: name,
+          price: price,
+          count: 1,
+          id: id,
+        };
+
+        addToCart(cartItem);
+      });
+
       cardsMenu.append(card);
     });
   };
